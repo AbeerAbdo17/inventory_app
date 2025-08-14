@@ -1,0 +1,64 @@
+const LoadDataForm = () => {
+  const [formData, setFormData] = useState({
+    no: '',
+    date: '',
+    cert_no: '',
+    contract_no: '',
+    ex_form_no: '',
+    qty_goods: '',
+    remaining_qty: '',
+    bol_no: '',
+    exporter: '',
+    goods: '',
+    qty: '',
+    country: '',
+    replacement: '',
+    date_of_replacement: '',
+    date_of_complet: '',
+    upload_no: ''
+  });
+
+
+const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:5000/api/load_data', formData);
+      alert('تم حفظ البيانات بنجاح');
+      setFormData({});
+    } catch (error) {
+      console.error(error);
+      alert('حدث خطأ أثناء الحفظ');
+    }
+  };
+
+
+
+
+// Backend Code:
+
+app.post('/api/load_data', (req, res) => {
+  const data = req.body;
+  const sql = `
+    INSERT INTO load_data 
+    (no, date, cert_no, contract_no, ex_form_no, qty_goods, remaining_qty, bol_no, exporter, goods, qty, country, replacement, date_of_replacement, date_of_complet, upload_no)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [
+    data.no, data.date, data.cert_no, data.contract_no, data.ex_form_no,
+    data.qty_goods, data.remaining_qty, data.bol_no, data.exporter, data.goods,
+    data.qty, data.country, data.replacement || null,
+    data.date_of_replacement || null, data.date_of_complet || null, data.upload_no
+  ];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+    res.status(201).json({ message: 'Data inserted', id: result.insertId });
+  });
+});

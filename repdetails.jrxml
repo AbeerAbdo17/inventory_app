@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="repdet10mar" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="16acf410-50b6-4146-aeeb-7581a8f6d876">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sub_no" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fdate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ldate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="com_name" class="java.lang.String"/>
+	<parameter name="com_loc" class="java.lang.String"/>
+	<parameter name="com_tel" class="java.lang.String"/>
+	<parameter name="com_email" class="java.lang.String"/>
+	<parameter name="username" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="old_bal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="close_bal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pcr" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pdr" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    j.journal_no,
+    j.journal_date,
+    j.journal_docno,
+    j.journal_dr,
+    j.journal_cr,
+
+    -- تحديد المصدر (مبيعات أو مشتريات أو وصف عام)
+    CASE
+        WHEN s.concatenated_items IS NOT NULL THEN
+            CONCAT('مبيعات: "', s.concatenated_items, '"')
+        WHEN p.concatenated_purchases IS NOT NULL THEN
+            CONCAT('مشتريات: "', p.concatenated_purchases, '"')
+        ELSE j.journal_desc
+    END AS journal_desc,
+
+    sm.submain_name,
+
+    -- الرصيد المتراكم (Running Balance)
+    @running_balance := @running_balance + (j.journal_dr - j.journal_cr) AS final_balance,
+
+    -- الرصيد الكلي من جدول اليومية
+   (
+    SELECT SUM(journal_dr) - SUM(journal_cr)
+    FROM journal
+    WHERE journal_submain_no = $P{sub_no}
+) AS overall_balance,
+
+    -- الرصيد للفترة المحددة فقط
+    (
+        SELECT SUM(journal_dr) - SUM(journal_cr)
+        FROM journal
+        WHERE journal_submain_no = $P{sub_no}
+          AND journal_date BETWEEN $P{fdate} AND $P{ldate}
+    ) AS period_balance,
+
+    -- نوع العملية
+    CASE
+        WHEN s.concatenated_items IS NOT NULL THEN 'مبيعات'
+        WHEN p.concatenated_purchases IS NOT NULL THEN 'مشتريات'
+        ELSE 'أخرى'
+    END AS operation_type
+
+FROM
+    journal j
+
+INNER JOIN
+    submain sm ON j.journal_submain_no = sm.submain_no
+
+LEFT JOIN (
+    SELECT
+        fk,
+        GROUP_CONCAT(CONCAT(COALESCE(qty, '0'), ' ', COALESCE(item_name, 'Unknown')) SEPARATOR ', ') AS concatenated_items
+    FROM
+        saledets
+    GROUP BY fk
+) s ON j.sale_inv = s.fk
+
+LEFT JOIN (
+    SELECT
+        invoice_no,
+        GROUP_CONCAT(CONCAT(COALESCE(item_qty, '0'), ' ', COALESCE(item_name, 'Unknown')) SEPARATOR ', ') AS concatenated_purchases
+    FROM
+        purchases_det
+    GROUP BY invoice_no
+) p ON j.purchase_inv = p.invoice_no
+
+CROSS JOIN
+    (SELECT @running_balance := 0) AS init_balance
+
+WHERE
+    j.journal_submain_no = $P{sub_no}
+    AND j.journal_date BETWEEN $P{fdate} AND $P{ldate}
+
+ORDER BY
+    j.journal_date,
+    j.journal_no,
+    j.id;]]>
+	</queryString>
+	<field name="journal_no" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="journal_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="journal_docno" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="journal_dr" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="journal_cr" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="journal_desc" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="submain_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="final_balance" class="java.lang.Double"/>
+	<field name="overall_balance" class="java.lang.Double"/>
+	<field name="period_balance" class="java.lang.Double"/>
+	<field name="operation_type" class="java.lang.String"/>
+	<variable name="variable1" class="java.lang.String">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="sumdr" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{journal_dr}]]></variableExpression>
+	</variable>
+	<variable name="sumcr" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{journal_cr}]]></variableExpression>
+	</variable>
+	<variable name="balance" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{sumdr} - $V{sumcr}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="187" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="99fe16ca-2672-4fbe-9c20-576eb678c52e" x="231" y="154" width="48" height="24"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[من تاريخ]]></text>
+			</staticText>
+			<textField pattern="d/M/yyyy">
+				<reportElement uuid="11b3e1b9-f6ea-490f-a88d-f9de1affc383" x="147" y="154" width="84" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fdate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="d/M/yyyy">
+				<reportElement uuid="13064c77-901c-4c6a-b481-d34cafa1b0cc" x="46" y="154" width="79" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ldate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6a584f09-8276-4010-bc51-25a255c3a7c7" x="126" y="154" width="19" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[الى]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="35b8851f-6909-4590-84aa-cd62677dab11" x="483" y="153" width="69" height="24"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[اسم الحساب:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5de06d77-4278-477a-a9e4-0f2dc2d5d763" x="287" y="153" width="194" height="23"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{submain_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="cb9ee586-8429-4c6f-84cd-d04d054cdc20" x="199" y="125" width="166" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[تقرير كشف حساب]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="27" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="fc6ac6d7-c2c9-4a83-a045-b27ff3043623" mode="Opaque" x="0" y="-28" width="0" height="23" backcolor="#E6E1E1"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="160ff23e-4fe7-4629-bfeb-faf2b1aac9ce" x="4" y="3" width="68" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[الـــــتاريخ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="84d6a096-bccc-4b67-aa6b-687ea4f445ed" x="134" y="3" width="200" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[البيــــــــان]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ea61e211-0f3d-4fc7-a05b-e3b69c665caa" x="423" y="3" width="68" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[مدين]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="160ff221-dd63-43fe-9286-60eaee1d90d4" x="338" y="4" width="76" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[دائن]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="dad5dc84-083b-47d3-8c3d-c21bcf9eb9f5" x="497" y="0" width="1" height="26"/>
+			</line>
+			<line>
+				<reportElement uuid="79b5b533-e78b-4db6-9587-d14f67c5eac2" x="334" y="0" width="1" height="27"/>
+			</line>
+			<line>
+				<reportElement uuid="81f4812c-b5ae-4931-8c64-c3da47395a0c" x="73" y="0" width="1" height="26"/>
+			</line>
+			<line>
+				<reportElement uuid="400fa2af-dc25-4b8d-9f96-a9c7cc543169" x="2" y="26" width="552" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="0cb37f13-38be-4f11-9f6e-0ec4536e7d18" x="2" y="0" width="1" height="25"/>
+			</line>
+			<line>
+				<reportElement uuid="35368ca8-618a-4278-afdb-be060513ba33" x="553" y="0" width="1" height="26"/>
+			</line>
+			<line>
+				<reportElement uuid="33c044ee-a4a3-4af3-b264-b2309f0927de" x="2" y="-1" width="553" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="4a6268a1-01d3-4bb2-90f8-128586e677c0" x="497" y="4" width="55" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[رقم القيد]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="addea0ef-59f5-4b02-bced-22e4a5f46394" x="416" y="-1" width="1" height="27"/>
+			</line>
+			<staticText>
+				<reportElement uuid="adab09f2-0272-4869-b368-c393020a91fa" x="77" y="3" width="57" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[رقم العملية]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="4e702405-a7ef-4fbc-a493-3e5c1c0a7bb8" x="134" y="-1" width="1" height="25"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<line>
+				<reportElement uuid="beca245a-3fab-4093-90ba-e46c5156b329" x="3" y="0" width="552" height="1" forecolor="#999999"/>
+			</line>
+			<line>
+				<reportElement uuid="0ea74368-55a2-4221-9481-1d09ff9fb02b" stretchType="RelativeToTallestObject" x="553" y="0" width="1" height="22"/>
+			</line>
+			<line>
+				<reportElement uuid="30520b59-d304-43d4-b40c-a9c4c7548e1a" stretchType="RelativeToTallestObject" x="416" y="0" width="1" height="22"/>
+			</line>
+			<line>
+				<reportElement uuid="863f8823-2da8-48d2-90ef-4d9c54a4636a" stretchType="RelativeToTallestObject" x="334" y="0" width="1" height="22"/>
+			</line>
+			<line>
+				<reportElement uuid="c896f7a4-7aea-4f7c-b22e-ae6184ae84db" stretchType="RelativeToTallestObject" x="73" y="0" width="1" height="22"/>
+			</line>
+			<line>
+				<reportElement uuid="57d63be1-d4dd-4573-ac0d-88f22893d3c2" stretchType="RelativeToTallestObject" x="2" y="0" width="1" height="22"/>
+			</line>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="5d2127dc-158b-4ffb-ac18-4dcad4f93386" x="2" y="2" width="70" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{journal_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d3bce4a-c0a5-4836-a588-dde25fcb423b" stretchType="RelativeToTallestObject" x="134" y="2" width="201" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{journal_desc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="885e302f-02e9-41d2-a691-02a691137f06" x="335" y="2" width="81" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{journal_cr}) == null ? "0" : $F{journal_cr}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="336ab55b-5f79-4250-a10f-31122610ee99" x="416" y="2" width="81" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{journal_dr}) == null ? "0" : $F{journal_dr}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0;-###0" isBlankWhenNull="true">
+				<reportElement uuid="9348c546-3ffd-4667-914f-96bab81b7506" x="497" y="2" width="55" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{journal_no}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="5f4ca763-0855-4c4b-b258-25b593566a70" stretchType="RelativeToTallestObject" x="497" y="0" width="1" height="22"/>
+			</line>
+			<line>
+				<reportElement uuid="7c85d096-05b7-4998-81af-e9edc117c483" stretchType="RelativeToTallestObject" x="134" y="-2" width="1" height="24"/>
+			</line>
+			<textField>
+				<reportElement uuid="05b1d35c-2706-442f-a1a7-31542425504e" x="77" y="2" width="57" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{journal_docno}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="38" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="32" splitType="Stretch">
+			<textField>
+				<reportElement uuid="31d9d068-fa10-4854-a83c-e9a8ed64dc2b" x="218" y="8" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="0eba0222-549f-45a5-b323-3295fc8bf18d" x="298" y="8" width="40" height="20"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="2ae283e6-318c-4606-96e7-faf514d6da91" x="7" y="3" width="545" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="e59540d5-0f85-4c6b-995e-d465cf67a4d7" x="7" y="5" width="545" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="4f23293b-36f5-4f9c-89d4-6200a25b37ea" x="491" y="7" width="62" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[المستخدم]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="96f8a9c5-e6d6-495a-b1a3-80f2f5ace3b1" x="353" y="7" width="130" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{username}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="73" splitType="Stretch">
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement uuid="7d517881-ee40-4a29-bbb2-9ae30c83bf39" x="279" y="3" width="86" height="20"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sumcr}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement uuid="3dffa8d3-c884-47c8-a876-7cf5a588fd6d" x="365" y="3" width="90" height="20"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sumdr}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="09ec087c-9b92-4217-aa34-50782d460521" x="455" y="3" width="99" height="20"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[المجموع]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ab89b5e0-f6cb-4804-934d-8e6204025511" x="455" y="23" width="99" height="20"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[رصيد الفترة]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="6c82fbde-46d7-4b85-9759-6f417b06317b" x="279" y="23" width="176" height="20"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{balance}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="02db0147-6054-4576-992f-d29e75e92f99" x="2" y="1" width="552" height="1" forecolor="#000000"/>
+			</line>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="f052c456-d7c0-4724-bc78-729a5b8ace75" x="279" y="43" width="176" height="20"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{overall_balance}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="41969060-c474-4af7-9dc4-86ecc0134bea" x="455" y="43" width="99" height="20"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[الرصيد الختامي]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

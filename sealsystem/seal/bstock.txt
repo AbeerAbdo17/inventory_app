@@ -1,0 +1,70 @@
+   public void Bstock(){    
+ DefaultTableModel model = (DefaultTableModel) jTblSales.getModel();
+ try{ 
+     String sql8;
+String host1 = "jdbc:mysql://localhost:3306/fersan?characterEncoding=UTF-8";
+String uName1="root";
+String uPass1="0000";
+con=DriverManager.getConnection(host1,uName1 ,uPass1);
+ int cOunter = model.getRowCount();
+// int serial = 0 ;
+ PreparedStatement pst26 = null ,pst27 = null;
+ for ( int i=0 ;  i <cOunter ; ++i){   
+    item_id = ( model.getValueAt(i, 4).toString());
+       System.out.println("itemidtest"+item_id);
+    // for(int j = 0; j <= i; ++j){ 
+        sql8="select* from batches Where store = '"+Store.getText()+"' and item_id= '"+item_id+"' and quantity >0 and expiry = ( SELECT MIN(expiry) FROM batches Where item_id= '"+item_id+"'  and quantity >0 and store = '"+Store.getText()+"') ";
+        stmt=con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        rs1=stmt.executeQuery(sql8);             
+      if  (rs1.next()){
+            serial = rs1.getInt("serial");
+            double qnty = rs1.getDouble("quantity");
+               System.out.println("qntytest = "+qnty);
+            if( qnty < ((Double.parseDouble(model.getValueAt(i, 2).toString()))-Bqty)) {
+    Bqty = Double.parseDouble(model.getValueAt(i, 2).toString()) - qnty - Bqty;
+   //
+//   JOptionPane.showMessageDialog(null, "2023 - 1");
+       String sql26 = "update  batches  set quantity= 0  where item_id= '"+item_id+"' and serial= '"+serial+"' ";
+         pst26=con.prepareStatement(sql26); 
+         pst26.addBatch(); 
+            pst26.executeBatch();
+         //con.close();
+        // stock();
+        // rs1=stmt.executeQuery(sql8);
+        //qnty = rs1.getDouble("quantity");
+           stock();
+ }  // }
+         else  { 
+                if(Bqty == 0.0){
+                Bqty = qnty - (Double.parseDouble(model.getValueAt(i, 2).toString()));
+           //     JOptionPane.showMessageDialog(null, "2023 - 2");
+                 String sql27 = "update  batches  set quantity=?  where item_id= '"+item_id+"' and serial= '"+serial+"' ";
+         pst27=con.prepareStatement(sql27); 
+         pst27.setDouble (1, Bqty);
+         pst27.addBatch(); 
+        // pst27.executeBatch();    
+                
+                }
+                else{       
+    Bqty = qnty-Bqty;        
+        System.out.println("qqqq = "+Bqty);
+        System.out.println("serial = "+serial);
+    //    JOptionPane.showMessageDialog(null, "2023 - 3");
+        String sql27 = "update  batches  set quantity=?  where item_id= '"+model.getValueAt(i, 4).toString()+"' and serial= '"+serial+"' ";
+ pst27=con.prepareStatement(sql27); 
+         pst27.setDouble (1, Bqty);
+         pst27.addBatch(); 
+            
+ } 
+        pst27.executeBatch();     }
+      //con.close();
+            
+ Bqty = 0.0; } 
+ }
+
+ 
+ //}
+ }  catch (SQLException ex) {
+    System.out.println(ex.getMessage())   ;      
+}
+     }

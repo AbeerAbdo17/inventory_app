@@ -1,0 +1,43 @@
+ public void stock(){
+System.out.println("bqty = "+Bqty);
+ DefaultTableModel model = (DefaultTableModel)jTblSales.getModel();
+ try{ 
+String host1 = "jdbc:mysql://localhost:3306/fersan?characterEncoding=UTF-8";
+String uName1="root";
+String uPass1="0000";
+con=DriverManager.getConnection(host1,uName1 ,uPass1);
+String sql81="select* from batches Where store = '"+Store.getText()+"' and item_id= '"+item_id+"' and quantity >0 and expiry = ( SELECT MIN(expiry) FROM batches Where item_id= '"+item_id+"'  and quantity >0 and store = '"+Store.getText()+"') ";
+        stmt=con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        rs11=stmt.executeQuery(sql81);     
+        rs11.next();
+            serial = rs11.getInt("serial");
+            double qnty = rs11.getDouble("quantity");
+            System.out.println("stockqnt = "+qnty);
+            if( qnty < Bqty) {
+              double nqs = Bqty- qnty;
+               System.out.println("newnqs = "+nqs);  
+        //       JOptionPane.showMessageDialog(null, "2023 - 1 - stock");
+       String sql26 = "update  batches  set quantity= 0  where item_id= '"+item_id+"' and serial= '"+serial+"' ";
+        PreparedStatement pst261=con.prepareStatement(sql26); 
+         pst261.addBatch();
+         pst261.executeBatch();
+         Bqty = nqs;
+         stock();// rs1=stmt.executeQuery(sql8);
+          //qnty = rs1.getDouble("quantity");
+           Bstock();
+   }else  { 
+    //Bqty = qnty-Double.parseDouble(model.getValueAt(i, 2).toString());       
+      System.out.println("nqs = "+nqs);
+        System.out.println("serial = "+serial);
+    //    JOptionPane.showMessageDialog(null, "2023 - 2 - stock");
+             String sql27 = "update  batches  set quantity=?  where item_id= '"+item_id+"' and serial= '"+serial+"' ";
+PreparedStatement pst271=con.prepareStatement(sql27); 
+         pst271.setDouble (1, rs11.getDouble("quantity")- Bqty );
+         pst271.addBatch(); 
+         pst271.executeBatch();    
+           // con.close();
+            }
+        }catch (SQLException ex) {
+      System.out.println(ex.getMessage())   ;      }
+   
+   }  

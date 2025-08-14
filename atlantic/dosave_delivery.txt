@@ -1,0 +1,53 @@
+ public void DoSave(){
+             try{   
+          DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+con=null;
+ con=acc.Connect.ConnectDB();
+String sql1="INSERT into delivery (del_serial ,del_date ,clearername,landing,delivery,clean,conference,ppd,militry,stamp,food, extraction,others,notifications,wharfage,admin,insurance,subtotal ,vat ,gtotal,thc,elect,freight,congestion,deposit ) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";   
+PreparedStatement pst=con.prepareStatement(sql1);
+pst.setString(1,txt_serial.getText() );
+pst.setString(2, ((JTextField)txt_date.getDateEditor().getUiComponent()).getText());
+pst.setString(3, txt_clearername.getText());
+pst.setDouble(4,Double.parseDouble(txt_landing.getText()));
+pst.setDouble(5,Double.parseDouble(txt_delivery.getText() ));
+pst.setDouble(6,Double.parseDouble(txt_clean.getText()) );
+pst.setDouble(7,Double.parseDouble(txt_conference.getText()) );
+pst.setDouble(8,Double.parseDouble(txt_admin_fees.getText()) );
+pst.setDouble(9,Double.parseDouble(txt_militry.getText()) );
+pst.setDouble(10,Double.parseDouble(txt_stamp.getText()) );
+pst.setDouble(11,Double.parseDouble(txt_food.getText()) );
+pst.setDouble(12,Double.parseDouble(txt_extraction.getText()) );
+pst.setDouble(13,Double.parseDouble(txt_state.getText()) );
+pst.setDouble(14,Double.parseDouble(txt_notifications.getText())) ; 
+pst.setDouble(15,Double.parseDouble(txt_ssc.getText() ));
+pst.setDouble(16,Double.parseDouble(txt_lifting.getText()) );
+pst.setDouble(17,Double.parseDouble(txt_insinside.getText()) );
+pst.setDouble(18,Double.parseDouble(txt_subtotal.getText()) );
+pst.setDouble(19,Double.parseDouble(txt_vat.getText()) );
+pst.setDouble(20,Double.parseDouble(txt_gtotal.getText()) );
+pst.setDouble(21,Double.parseDouble(txt_tourism.getText()) );
+pst.setDouble(22,Double.parseDouble(txt_trafic.getText()) );
+pst.setDouble(23,Double.parseDouble(txt_province.getText()) );
+pst.setDouble(24,Double.parseDouble(txt_eus.getText()) );
+pst.setDouble(25,Double.parseDouble(txt_depo.getText()) );
+pst.addBatch();
+for (int i = 0; i < model.getRowCount(); i++){
+    System.out.println("loop dosave insode");
+    String sql3 = "update  mast set mast_d_serial=?, mast_consignee=? where mast_id= '"+model.getValueAt(i, 0).toString()+"'  ";
+    PreparedStatement pst1=con.prepareStatement(sql3);
+//pst1.setString(1, "2");
+    pst1.setString(1,txt_serial.getText() );
+     pst1.setString(2,txt_mast_consignee.getText() );
+          pst1.addBatch();
+          pst1.executeBatch();
+    }
+pst.executeBatch();
+             JOptionPane.showMessageDialog(null, "Record Saved"); 
+  doClear();
+  sTarter();
+  }
+  catch (SQLException ex) {
+      System.out.println(ex.getMessage())   ;  
+      System.out.println(ex.getNextException())   ;  
+}
+   }

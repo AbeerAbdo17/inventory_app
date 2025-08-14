@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1244935-4c60-433a-bf75-880cd4644e8f">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fdate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ldate" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+saledets.`fk` AS saledets_fk,
+     saledets.`QTY` AS saledets_QTY,
+     saledets.`GS` AS saledets_GS,
+
+(select sum(paid) from sales where gs between $P{fdate} and $P{ldate}) as curcash,
+     saledets.`PROFIT` AS saledets_PROFIT,
+     saledets.`item_name` AS saledets_item_name,
+    (select item_scname from items where items.item_id = saledets.id limit 1) as scname,
+     saledets.`UC` AS saledets_UC,sum( saledets.`QTY`),sum(  saledets.`PROFIT`),sum( saledets.`tp`),
+company.`name` AS company_name,
+     company.`address` AS company_address,
+     company.`id` AS company_id
+FROM
+     `saledets` saledets ,`company` company where saledets.`GS` >=$P{fdate} and saledets.`GS` <=$P{ldate} and refund = 0 group by saledets.`item_name`]]>
+	</queryString>
+	<field name="saledets_fk" class="java.lang.Integer"/>
+	<field name="saledets_QTY" class="java.lang.Double"/>
+	<field name="saledets_GS" class="java.sql.Date"/>
+	<field name="curcash" class="java.lang.Double"/>
+	<field name="saledets_PROFIT" class="java.lang.Double"/>
+	<field name="saledets_item_name" class="java.lang.String"/>
+	<field name="scname" class="java.lang.String"/>
+	<field name="saledets_UC" class="java.lang.Double"/>
+	<field name="sum( saledets.`QTY`)" class="java.lang.Double"/>
+	<field name="sum(  saledets.`PROFIT`)" class="java.lang.Double"/>
+	<field name="sum( saledets.`tp`)" class="java.lang.Double"/>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="company_address" class="java.lang.String"/>
+	<field name="company_id" class="java.lang.Integer"/>
+	<variable name="sum(  saledets.`PROFIT`)_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sum(  saledets.`PROFIT`)}]]></variableExpression>
+	</variable>
+	<variable name="sum( saledets.`UC`)_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="variable1" class="java.lang.String"/>
+	<variable name="sum( saledets.`QTY`)_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sum( saledets.`QTY`)}]]></variableExpression>
+	</variable>
+	<variable name="sum( saledets.`tp`)_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sum( saledets.`tp`)}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="147" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="e502968e-92aa-4784-859d-71f0eb0cb750" x="223" y="98" width="116" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[تقرير مبيعات]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="251c7d35-0c57-4947-ba2c-7fa5d744451e" x="357" y="124" width="22" height="20"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[من]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c9d1663-568c-44fd-9c21-980a1a74160d" x="265" y="124" width="23" height="20"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[الى]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="1e209f2c-a91d-4867-abcb-8feff2acaa1d" x="292" y="124" width="61" height="20"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fdate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="72382c33-552d-416b-8ae1-0c6f96677378" x="188" y="124" width="71" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ldate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="7" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="4bea30da-f94d-49ef-b2be-08e185ab8ce6" x="10" y="1" width="533" height="20" backcolor="#EFEDED"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="696182b6-fbd1-4977-a476-5ec64b0aebf8" x="348" y="1" width="193" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[الصنف]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cda1be3d-8240-4967-842c-99674a5ac25a" x="172" y="2" width="70" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[الكمية]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6ea557b7-3b0d-4fad-99c8-625618813207" x="93" y="2" width="75" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[اجمالي البيع]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bb376cc1-067a-4ede-9d9a-9930727dbf27" x="244" y="2" width="95" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[الأسم العلمي]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="a44eee8f-d4d4-4c99-a72f-e7be06e127ec" x="10" y="23" width="534" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="ac3df42a-4008-4c15-9d74-e832c0ebc479" x="90" y="2" width="1" height="18"/>
+			</line>
+			<line>
+				<reportElement uuid="c0f0b10a-62f3-4d4e-a2f5-6241bfb4a131" x="169" y="1" width="1" height="19"/>
+			</line>
+			<line>
+				<reportElement uuid="b3ad12e9-9aad-4697-b314-b08180f24e69" x="243" y="1" width="1" height="19"/>
+			</line>
+			<line>
+				<reportElement uuid="2a9aa6f2-3087-46a1-b336-5f232ed166ec" x="342" y="1" width="1" height="20"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement uuid="1b145950-060b-45a5-9114-d40c203c22f8" x="350" y="2" width="191" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{saledets_item_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement uuid="4f71d25b-607a-4b35-bb2d-5833eb22b729" x="172" y="2" width="70" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum( saledets.`QTY`)}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="51b67ae5-feb4-4091-8bcf-2ebe279a359a" x="11" y="2" width="79" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum(  saledets.`PROFIT`)}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="1cc246dc-47b3-4b87-914b-c27df37d10b3" x="93" y="2" width="75" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum( saledets.`tp`)}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4a919421-431d-4e65-804a-b717e51a3601" x="244" y="2" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{scname}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="3a846245-d5ab-42ec-a9e3-b0efb9dda9ee" x="543" y="0" width="1" height="22" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement uuid="1aef911d-1222-4384-b63a-bbadcf8b12b9" x="342" y="0" width="1" height="22" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement uuid="6825fa9e-1e29-47d7-b35e-cf58ac5e7a5a" x="243" y="0" width="1" height="22" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement uuid="76eeb10d-2150-4136-b025-24449edc33ce" x="169" y="0" width="1" height="22" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement uuid="42974765-d610-421f-913c-6e8d8a133797" x="90" y="0" width="1" height="22" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement uuid="62d1e6e8-5afc-431b-a6a3-3f66c804e051" x="10" y="0" width="1" height="22" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement uuid="18b23dbf-75b4-49d5-a229-eb6b34ad65c7" x="10" y="22" width="534" height="1" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="32" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="0703ad78-16ff-4449-b05e-679b697e0460" x="10" y="3" width="533" height="20" backcolor="#EFEDED"/>
+			</rectangle>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="e130f62f-769c-46a2-b572-16d8d3be6c23" x="10" y="3" width="79" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum(  saledets.`PROFIT`)_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ed7c1873-679a-4f5a-b7a3-698749730cb4" x="491" y="3" width="52" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[الجملة]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement uuid="93442cd2-599a-4f42-8393-7ecfc4140f9e" x="172" y="3" width="72" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum( saledets.`QTY`)_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="b78bc069-a17a-4e6b-bcea-a9baa1e308d1" x="93" y="3" width="75" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum( saledets.`tp`)_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

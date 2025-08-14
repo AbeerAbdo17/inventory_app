@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RepVouchar" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7a6037df-633d-417e-b96b-10447577d16d">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="BNO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="user" class="java.lang.String"/>
+	<parameter name="mr" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * from  journal inner join SUBMAIN on SUBMAIN.SUBMAIN_NO =journal.journal_SUBMAIN_NO
+WHERE  journal.JOURNAL_NO=$P{BNO}  and year(journal.journal_date)=(select systemyear from sysyear order by  systemyear desc limit 1 )]]>
+	</queryString>
+	<field name="ID" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="JOURNAL_DATE" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="JOURNAL_NO" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="JOURNAL_SUBMAIN_NO" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="JOURNAL_DOCNO" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="JOURNAL_DESC" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="JOURNAL_USER" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="JOURNAL_DR" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="JOURNAL_CR" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="IDAUTO" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="method" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sale_inv" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SUBMAIN_NO" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SUBMAIN_NAME" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SUBMAIN_MAIN_NO" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SUBMAIN_STATUS" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="clrno" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="sumdb" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{JOURNAL_DR}]]></variableExpression>
+	</variable>
+	<variable name="sumcr" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{JOURNAL_CR}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="96" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement uuid="c5e924f8-013e-4281-ad7b-0aba19ba2c8f" x="17" y="0" width="550" height="91"/>
+				<imageExpression><![CDATA["acadmic.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="121" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="64bca631-05d6-4ade-aa1b-aac5010ba2c1" x="479" y="61" width="62" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[التاريخ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b66d54f1-bc34-4f57-9cec-f43203f1c2d3" x="479" y="34" width="62" height="21"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[رقم القيد]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="51858c93-58cc-44ac-a0c0-159a3e3ac32c" x="3" y="92" width="550" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="1c2b2525-ad8d-4310-920a-fe4d37e23e89" x="5" y="118" width="548" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="2dd68c34-deb1-43da-9ebf-b2dab6c24b37" x="552" y="94" width="1" height="22"/>
+			</line>
+			<line>
+				<reportElement uuid="81661cc6-2ce1-4756-9905-6983aab382f8" x="-105" y="90" width="1" height="22"/>
+			</line>
+			<staticText>
+				<reportElement uuid="62b3a11c-1ec0-49d5-9031-3e8621bfc99f" x="9" y="96" width="231" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[الوصف]]></text>
+			</staticText>
+			<textField pattern="d/M/yyyy">
+				<reportElement uuid="73406d80-7bce-4fe6-84f2-91260575344c" x="375" y="61" width="110" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JOURNAL_DATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="212eca2d-ac71-4605-99c3-81211dd02ace" x="359" y="34" width="112" height="21"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JOURNAL_NO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e6d93170-7a4b-4082-8808-d7b288741a2e" x="245" y="96" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[له]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3e4f56d6-638d-42fa-be29-2420da0d2a76" x="331" y="96" width="80" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[منه]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="07242430-54e2-472f-b6ee-d00a39f6999b" x="416" y="97" width="133" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[اسم الحساب]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="46a130be-acc2-47c0-931f-9432e85dd4f5" x="3" y="92" width="1" height="25"/>
+			</line>
+			<line>
+				<reportElement uuid="70b861f6-f632-435b-a6ef-d9401f56c5cf" x="413" y="93" width="1" height="25"/>
+			</line>
+			<line>
+				<reportElement uuid="e4162031-8117-491c-bc15-b69fb447fef4" x="330" y="93" width="1" height="25"/>
+			</line>
+			<line>
+				<reportElement uuid="9b3fbd7e-b84c-4516-91e4-4a4c182b3273" x="242" y="93" width="1" height="25"/>
+			</line>
+			<textField>
+				<reportElement uuid="2a7fe43b-0259-4347-bad0-6ec24fd9c77e" x="17" y="64" width="237" height="20"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{mr}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b974e6c6-d6e7-43a8-8f69-a10b04a4611e" x="244" y="60" width="62" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[السيد]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="70e2f647-e751-40f7-9f64-bea8e8edce4b" x="244" y="35" width="62" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[المستند]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="13fd64f3-57ba-4598-88dd-589116497b28" x="17" y="37" width="233" height="20"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JOURNAL_DOCNO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bcd35759-c786-4695-8098-4e8cda5410de" x="213" y="6" width="186" height="21"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[سند صرف / قبض]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement uuid="2481599b-b64a-4519-b4bd-c5dfa6bec363" x="244" y="0" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JOURNAL_CR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3c3da1be-5255-4bfe-b2dc-5054c3759128" x="5" y="-4" width="235" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JOURNAL_DESC}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="e8e7cc44-b6f0-4589-8b23-44acc155e7a9" x="553" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement uuid="282df36c-d238-4699-bfc5-9f89485a3bb7" x="413" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement uuid="b9ca49a5-9ac2-4cc0-a625-0649c8f0f4dc" x="330" y="0" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement uuid="70cb3f1d-b973-4dbb-b5b1-2347f989f706" x="242" y="0" width="1" height="23"/>
+			</line>
+			<textField>
+				<reportElement uuid="cb5b767d-9272-4f0c-a92e-4a808b66255b" x="417" y="0" width="133" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUBMAIN_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="35a477e6-8714-4c80-8aa6-9e3d3186e152" x="331" y="0" width="80" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JOURNAL_DR}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="2cb49b21-7675-4c71-8a5b-75fbd1b1d885" x="4" y="-1" width="1" height="23"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement uuid="2ddd46f4-19f0-44b6-9466-8e19dd5954bb" x="3" y="0" width="551" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="ebdfe205-0cb1-466f-b320-cec674fb7ecb" x="9" y="1" width="545" height="1"/>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="28" splitType="Stretch">
+			<textField>
+				<reportElement uuid="2fe5b0e9-f55f-41b6-b483-1718004dd91c" x="201" y="2" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="9cf1c538-5bb3-41ed-8794-92ed02c9e0f0" x="281" y="2" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="10ef751d-397a-427a-a97a-d758c14d63a2" x="476" y="2" width="74" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[المستخدم]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="54db5fe0-a0cd-4316-bab0-4d0612c8ba82" x="343" y="2" width="127" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{user}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="1704fb0b-9675-428d-9cbd-d5a10d06ab73" x="173" y="23" width="112" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[توقيع المدير المالي]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bdaa8329-3a87-4e96-aa05-325e5125a423" x="7" y="23" width="164" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[.....................................................................]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a2a8e3be-8a5a-4e96-abbd-9b4541365cd7" x="297" y="24" width="163" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[.....................................................................]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="718fc8b0-00b4-4bb8-a1c3-3624d1f60d4b" x="461" y="24" width="91" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[توقيع المستلم]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="a76f80c2-1898-4687-ad07-771c5b31be8a" x="3" y="0" width="550" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="a4ee2547-ad9c-4faa-b5cd-14e88dd71afe" x="460" y="1" width="89" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[المجموع]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="7ef019d6-f93b-40ff-9d22-551dfaf7e984" x="331" y="1" width="114" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sumdb}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="765ef408-962a-40fc-a18e-e34e94d18d77" x="213" y="0" width="118" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sumcr}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
