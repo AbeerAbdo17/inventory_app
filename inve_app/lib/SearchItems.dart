@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:inve_app/main.dart' show LoginPage;
 
 void main() {
   runApp(MaterialApp(
@@ -69,6 +70,18 @@ class _SearchItemsScreenState extends State<SearchItemsScreen> {
         appBar: AppBar(
           title: const Text('بحث وإدارة الأصناف'),
           centerTitle: true,
+            actions: [
+    IconButton(
+      icon: const Icon(Icons.logout),
+      tooltip: 'تسجيل خروج',
+      onPressed: () {
+        Navigator.pushReplacement(
+          context,
+         MaterialPageRoute(builder: (_) => const LoginPage()),
+        );
+      },
+    ),
+  ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16),

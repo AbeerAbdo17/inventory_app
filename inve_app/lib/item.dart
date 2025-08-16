@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:inve_app/main.dart';
+
 class ItemManagerPage extends StatefulWidget {
   const ItemManagerPage({Key? key}) : super(key: key);
 
@@ -134,6 +136,18 @@ class _ItemManagerPageState extends State<ItemManagerPage> {
         appBar: AppBar(
           title: const Text('إدارة الأصناف'),
           centerTitle: true,
+            actions: [
+    IconButton(
+      icon: const Icon(Icons.logout),
+      tooltip: 'تسجيل خروج',
+      onPressed: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+        );
+      },
+    ),
+  ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16),
