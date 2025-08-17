@@ -1,4 +1,4 @@
-const dotenv = require('dotenv');  // لازم قبل أي استخدام
+const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 
 console.log('DB_NAME:', process.env.DB_NAME); // السطر للتحقق من قراءة .env

@@ -53,11 +53,14 @@ class _ItemManagerPageState extends State<ItemManagerPage> {
     });
   }
 
-  void resetForm() {
+void resetForm() {
+  setState(() {
     nameController.clear();
     unitPriceController.clear();
     editId = null;
-  }
+  });
+}
+
 
   Future<void> handleSubmit() async {
     String name = nameController.text.trim();
@@ -204,16 +207,21 @@ class _ItemManagerPageState extends State<ItemManagerPage> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: handleSubmit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                    child: Text(editId == null ? 'إضافة' : 'تحديث'),
-                  ),
-                  if (editId != null)
-                    TextButton(onPressed: resetForm, child: const Text('إلغاء')),
+ElevatedButton(
+      onPressed: handleSubmit,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue, 
+        padding: const EdgeInsets.all(16),
+        shape: const CircleBorder(),
+      ),
+      child: const Icon(Icons.add, color: Colors.white),
+    ),
+                    if (editId != null)
+      IconButton(
+        icon: const Icon(Icons.close, color: Colors.red),
+        onPressed: resetForm,
+        tooltip: 'إلغاء التعديل',
+      ),
                 ],
               ),
               const SizedBox(height: 16),

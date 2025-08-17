@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'SearchItems.dart';   // صفحة البحث
 import 'item.dart';          // صفحة الإضافة (ItemManagerPage)
 
+// ignore: constant_identifier_names
 const String API_BASE = 'http://100.70.131.12:5000';
 
 void main() {
@@ -139,13 +140,25 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: loading ? null : _login,
-                        child: loading
-                            ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                            : const Text('دخول', style: TextStyle(fontSize: 16)),
+                       child: loading
+    ? const SizedBox(
+        height: 22, width: 22,
+        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+      )
+    : const Text(
+        'دخول',
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.white,       
+          fontWeight: FontWeight.bold 
+        ),
+      ),
+
                       ),
                     ),
                     TextButton(
@@ -187,16 +200,26 @@ class _AdminHomePageState extends State<AdminHomePage> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: const Text('نظام إدارة المخزون')),
         body: pages[currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: currentIndex,
-          onTap: (index) => setState(() => currentIndex = index),
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'البحث'),
-            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'إضافة'),
-          ],
-        ),
+       bottomNavigationBar: BottomNavigationBar(
+  currentIndex: currentIndex,
+  onTap: (index) {
+    if (index == 2) { // رقم عنصر تسجيل الخروج
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
+    } else {
+      setState(() => currentIndex = index);
+    }
+  },
+  items: const [
+    BottomNavigationBarItem(icon: Icon(Icons.search), label: 'البحث'),
+    BottomNavigationBarItem(icon: Icon(Icons.add), label: 'إضافة'),
+    // BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'خروج'),
+  ],
+),
+
       ),
     );
   }
@@ -340,13 +363,25 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: loading ? null : _register,
                         child: loading
-                            ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                            : const Text('تسجيل', style: TextStyle(fontSize: 16)),
+    ? const SizedBox(
+        height: 22, width: 22,
+        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+      )
+    : const Text(
+        'تسجيل',
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.white,       
+          fontWeight: FontWeight.bold 
+        ),
+      ),
+
                       ),
                     ),
                     TextButton(

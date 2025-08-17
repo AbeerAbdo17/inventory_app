@@ -337,9 +337,14 @@ String _formatDate(dynamic rawDate) {
                                   controller: TextEditingController(text: editQuantity),
                                   onChanged: (val) => editQuantity = val,
                                 )
-                             : Text(
-  'الكمية: ${tx['quantity']} - ${_formatDate(tx['created_at'])}'
-),
+                            // 
+                               : Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('الكمية: ${tx['quantity']}'),
+          Text('التاريخ: ${_formatDate(tx['created_at'])}'),
+        ],
+      ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: editId == tx['id']
@@ -361,29 +366,38 @@ String _formatDate(dynamic rawDate) {
                         ),
                       ),
                     const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        DropdownButton<String>(
-                          value: newType,
-                          items: const [
-                            DropdownMenuItem(value: 'add', child: Text('إضافة')),
-                            DropdownMenuItem(value: 'withdraw', child: Text('سحب')),
-                          ],
-                          onChanged: (val) => setState(() => newType = val!),
-                        ),
-                        SizedBox(
-                          width: 80,
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            controller: TextEditingController(text: newQuantity),
-                            onChanged: (val) => newQuantity = val,
-                            decoration: const InputDecoration(hintText: 'الكمية'),
-                          ),
-                        ),
-                        ElevatedButton(onPressed: addTransaction, child: const Text('إضافة العملية')),
-                      ],
-                    ),
+                 Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    DropdownButton<String>(
+      value: newType,
+      items: const [
+        DropdownMenuItem(value: 'add', child: Text('إضافة')),
+        DropdownMenuItem(value: 'withdraw', child: Text('سحب')),
+      ],
+      onChanged: (val) => setState(() => newType = val!),
+    ),
+    SizedBox(
+      width: 100,
+      child: TextField(
+        keyboardType: TextInputType.number,
+        controller: TextEditingController(text: newQuantity),
+        onChanged: (val) => newQuantity = val,
+        decoration: const InputDecoration(hintText: 'الكمية'),
+      ),
+    ),
+    ElevatedButton(
+      onPressed: addTransaction,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue, 
+        padding: const EdgeInsets.all(16),
+        shape: const CircleBorder(),
+      ),
+      child: const Icon(Icons.add, color: Colors.white),
+    ),
+  ],
+)
+
                   ],
                 ),
               ),
