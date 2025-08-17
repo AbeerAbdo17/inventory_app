@@ -1,6 +1,11 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:inve_app/main.dart' show LoginPage;
+import 'package:intl/intl.dart' show DateFormat;
+
+
 
 void main() {
   runApp(MaterialApp(
@@ -9,10 +14,14 @@ void main() {
   ));
 }
 
+// ignore: constant_identifier_names
 const API_BASE = 'http://100.70.131.12:5000';
 
 class SearchItemsScreen extends StatefulWidget {
+  const SearchItemsScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _SearchItemsScreenState createState() => _SearchItemsScreenState();
 }
 
@@ -156,9 +165,10 @@ class TransactionsPopup extends StatefulWidget {
   final Map item;
   final Function(int) onNetQuantityChange;
 
-  TransactionsPopup({required this.item, required this.onNetQuantityChange});
+  const TransactionsPopup({super.key, required this.item, required this.onNetQuantityChange});
 
   @override
+  // ignore: library_private_types_in_public_api
   _TransactionsPopupState createState() => _TransactionsPopupState();
 }
 
@@ -199,6 +209,18 @@ class _TransactionsPopupState extends State<TransactionsPopup> {
       });
     }
   }
+
+String _formatDate(dynamic rawDate) {
+  if (rawDate == null) return '—';
+  try {
+    // لو السيرفر بيرجع String مثل "2025-08-17T12:34:56"
+    DateTime date = DateTime.parse(rawDate.toString());
+    return DateFormat('dd/MM/yyyy').format(date);
+  } catch (e) {
+    return rawDate.toString(); // fallback
+  }
+}
+
 
   void saveEdit(int id) async {
     int qty = int.tryParse(editQuantity) ?? 0;
@@ -315,7 +337,9 @@ class _TransactionsPopupState extends State<TransactionsPopup> {
                                   controller: TextEditingController(text: editQuantity),
                                   onChanged: (val) => editQuantity = val,
                                 )
-                              : Text('الكمية: ${tx['quantity']} - ${tx['created_at'] ?? '—'}'),
+                             : Text(
+  'الكمية: ${tx['quantity']} - ${_formatDate(tx['created_at'])}'
+),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: editId == tx['id']

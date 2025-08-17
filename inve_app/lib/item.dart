@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:inve_app/main.dart';
 
 class ItemManagerPage extends StatefulWidget {
-  const ItemManagerPage({Key? key}) : super(key: key);
+  const ItemManagerPage({super.key});
 
   @override
   State<ItemManagerPage> createState() => _ItemManagerPageState();
@@ -222,44 +222,57 @@ class _ItemManagerPageState extends State<ItemManagerPage> {
                   itemCount: filteredItems.length,
                   itemBuilder: (context, index) {
                     final item = filteredItems[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 6),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: Text(item['name'], style: const TextStyle(fontSize: 16)),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(double.parse(item['unit_price'].toString()).toStringAsFixed(2),
-                                  textAlign: TextAlign.center),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit, color: Colors.blue),
-                                    onPressed: () => handleEdit(item),
-                                    tooltip: 'تعديل',
-                                  ),
-                                  const SizedBox(width: 8),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () => handleDelete(item['id']),
-                                    tooltip: 'حذف',
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                 return Card(
+  margin: const EdgeInsets.symmetric(vertical: 6),
+  child: Padding(
+    padding: const EdgeInsets.all(12),
+    child: Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: Text(
+            item['name'],
+            style: const TextStyle(fontSize: 16),
+            overflow: TextOverflow.ellipsis, // يقص الاسم لو طويل
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 2,
+          child: Text(
+            double.parse(item['unit_price'].toString()).toStringAsFixed(2),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis, // يقص السعر لو حصل ضغط
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 2,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal, // لو الأيقونات ضغطت خليها تتزحزح
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  iconSize: 20,
+                  icon: const Icon(Icons.edit, color: Colors.blue),
+                  onPressed: () => handleEdit(item),
+                  tooltip: 'تعديل',
+                ),
+                IconButton(
+                  iconSize: 20,
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => handleDelete(item['id']),
+                  tooltip: 'حذف',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+);
                   },
                 ),
               ),
