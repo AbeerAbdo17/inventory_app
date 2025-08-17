@@ -68,7 +68,7 @@ class _SearchItemsScreenState extends State<SearchItemsScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('بحث وإدارة الأصناف'),
+          // title: const Text('بحث وإدارة الأصناف'),
           centerTitle: true,
             actions: [
     IconButton(

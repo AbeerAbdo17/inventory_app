@@ -134,7 +134,7 @@ class _ItemManagerPageState extends State<ItemManagerPage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('إدارة الأصناف'),
+          // title: const Text('إدارة الأصناف'),
           centerTitle: true,
             actions: [
     IconButton(
